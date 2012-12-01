@@ -1,0 +1,60 @@
+** PSPICE - power supply design (fig 2)**
+* zener diode subcircuit 
+.subckt zener_diode 1 2
+* connections: | |
+* anode |
+* cathode
+Dforward 1 2 1mA_diode
+Dreverse 2 4 ideal_diode
+Vz0 4 3 DC 4.9V 
+Rz 1 3 10
+* diode model statements
+.model 1mA_diode D (Is=100pA n=1.679 )
+.model ideal_diode D (Is=100pA n=0.01 )
+.ends zener_diode
+
+** main circuit **
+* ac line voltage
+Vac 10 0 sin(0 169V 60Hz 0 0)
+Rg 10 1 500
+
+* transformer section with center tap
+Lp 1 0 10
+Ls 2 5 100
+Kxfrmr Lp Ls 0.99999
+
+* full peak recitifer circuit
+D1 3 2 D1N4148
+D2 3 5 D1N4148
+D3 2 4 D1N4148
+D4 5 4 D1N4148
+
+** filter
+Rr1 4 8 160
+Rr2 3 9 160
+C1 8 0 500uF
+C2 9 0 500uF
+ 
+** voltage regulator
+R1 8 6 100k
+R2 9 7 100k
+XZ11 0 21 zener_diode
+XZ12 21 22 zener_diode
+XZ13 22 23 zener_diode
+XZ14 23 6 zener_diode
+XZ21 7 31 zener_diode
+XZ22 31 32 zener_diode
+XZ23 32 33 zener_diode
+XZ24 33 0 zener_diode
+
+* diode model statement
+.model D1N4148 D (Is=0.1pA Rs=16 CJO=2p Tt=12n Bv=100 Ibv=0.1p)
+
+
+** analysis requests
+.OPTIONS ITL5=0
+.TRAN 0.5ms 1s 0ms 0.5ms UIC
+
+** output requests
+.PROBE
+.END
