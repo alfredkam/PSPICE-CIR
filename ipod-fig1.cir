@@ -61,22 +61,24 @@
 
 ** main circuit **
 * Dc line voltage 
-VDc1 11 0  500mV
+VDc1 11 0 500mV
 Ro1 11 12 100
 
+* ps voltage *
+VPS1 40 0 55V
+VPS2 50 0 55V
+
 * right speaker
-X1 12 15 0 0 14 UA741
-R11 0 15 100
-R12 15 14 100
+X1 12 15 40 0 14 UA741
+R11 0 15 50
+R12 15 14 950
 Ro2 14 0 100K
 
 * left spealer
-X2 12 16 0 0 13 UA741
-R21 0 16 100
-R22 16 13 100
+X2 12 16 50 0 13 UA741
+R21 0 16 50
+R22 16 13 950
 Ro3 13 0 100K
-
-* opamp in parallel
 
 ** analysis requests
 .OPTIONS ITL5=0
