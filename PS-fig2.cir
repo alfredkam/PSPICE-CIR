@@ -1,0 +1,37 @@
+** PSPICE = power supply design (fig2) **
+
+* 1 mA Diode Model 
+*
+.model 1mA_diode D   (Is=100pA n=1.679 )
+
+* 1N5402 2A Rectifier Diode <data sheet> (used as zener to regulate the voltage)
+*
+.model D1N5402 D (
++ Is=11.5f Rs=8.254m Ikf=3.87 N=1 Xti=3 Eg=1.11 Cjo=130.4p
++ M=.3758 Vj=.75 Fc=.5 Isr=61.19u Nr=2 )
+
+** main circuit **
+* ac line voltage 
+Vac 10 0 sin (0 120V 60Hz 0 0)
+Rg 10 1 500
+
+* transformer section center tap
+Lp 1 0 4
+Ls 2 0 1
+Kxfrmr Lp Ls 0.99999
+
+
+D1 2 6 1mA_diode
+C1 6 0 500uF
+Rs 6 7 125K
+D2 7 0 D1N5402
+RL 7 0 100
+
+** analysis requests
+.OPTIONS ITL5=0
+.TRAN 0.5ms 5s 0ms 0.5ms UIC
+
+** output requests
+.PROBE
+.END
+ 
