@@ -1,5 +1,10 @@
-** PSPICE = power supply design (fig1) **
+** PSPICE = power supply design (fig2) **
 
+** PS +VDD +55V @ V(6,0), -VDD -55V @ V(16,0) 
+** right speaker 10Vpp ~ AC 5V @ V(23,0)
+** left speaker 10Vpp ~ AC 5V @ V(25,0)
+
+** models
 * 1 mA Diode Model 
 *
 .model 1mA_diode D   (Is=100pA n=1.679 )
@@ -10,7 +15,19 @@
 + Is=11.5f Rs=8.254m Ikf=3.87 N=1 Xti=3 Eg=1.11 Cjo=130.4p
 + M=.3758 Vj=.75 Fc=.5 Isr=61.19u Nr=2 )
 
-*
+.subckt zener_diode 1 2
+* connections: | |
+* anode |
+* cathode
+Dforward 1 2 1mA_diode
+Dreverse 2 4 1mA_diode
+Vz0 4 3 DC 4.9V 
+Rz 1 3 10
+* diode model statements
+.model 1mA_diode D (Is=100pA n=1.679 )
+.model ideal_diode D (Is=100pA n=0.01 )
+.ends zener_diode
+
 * 741 Op Amp Model <data sheet>
 *
 * UA741 OPERATIONAL AMPLIFIER "MACROMODEL" SUBCIRCUIT
@@ -58,27 +75,55 @@
 .MODEL QX NPN(IS=800.0E-18 BF=62.50)
 .ENDS
 
-
 ** main circuit **
-* Dc line voltage 
-VDc1 11 0 500mV
-Ro1 11 12 100
+* ac line voltage 
+* positive vdd
 
-* ps voltage *
-VPS1 40 0 55V
-VPS2 50 0 55V
+Vac1 9 0 AC 1 sin(0 120V 60Hz 0 0)
+Rg1 9 1 100
 
-* right speaker
-X1 12 15 40 0 14 UA741
-R11 0 15 50
-R12 15 14 950
-Ro2 14 0 100K
+* transformer section center tap
+Lp1 1 0 4.57
+Ls1 2 0 1
+Kxfrmr1 Lp1 Ls1 0.99999
 
-* left spealer
-X2 12 16 50 0 13 UA741
-R21 0 16 50
-R22 16 13 950
-Ro3 13 0 100K
+
+D1 2 6 1mA_diode
+C1 0 6 500uF
+Rs1 6 7 225k
+XZ1 7 0 zener_diode
+
+* negative vdd
+Vac2 10 0 AC 1 sin(0 120V 60Hz 0 0)
+Rg2 10 11 100
+
+* transformer section center tap
+Lp2 11 0 4.57
+Ls2 12 0 1
+Kxfrmr2 Lp2 Ls2 0.99999
+
+
+D2 16 12 1mA_diode
+C2 0 16 500uF
+Rs2 16 17 225k
+XZ2 17 0 zener_diode
+
+*********** ipod ****
+
+Vac 21 0 AC 1 sin(0 250mv 60Hz 0 0)
+Ripod 21 22 100
+
+Xop1 22 24 6 16 23 UA741
+R11 0 24 100
+R12 24 23 2K
+Rspeaker1 23 0 100K
+
+Xop2 22 26 6 16 25 UA741
+R21 0 26 100
+R22 26 25 2K
+Rspeaker2 25 0 100K
+
+
 
 ** analysis requests
 .OPTIONS ITL5=0
