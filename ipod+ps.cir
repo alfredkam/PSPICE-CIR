@@ -1,4 +1,4 @@
-** PSPICE = power supply design (fig2) **
+** PSPICE netlist**
 
 ** PS +VDD +55V @ V(6,0), -VDD -55V @ V(16,0) 
 ** right speaker 10Vpp ~ AC 5V @ V(23,0)
