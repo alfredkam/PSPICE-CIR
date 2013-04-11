@@ -1,6 +1,6 @@
 ** PSPICE = power supply design (fig2) **
 
-** measure @ V(6,0) 55V
+** +vdd +55v @ V(6,0) , -vdd -55v @(16,0)
 
 * 1 mA Diode Model 
 *
@@ -25,22 +25,40 @@ Rz 1 3 10
 .model ideal_diode D (Is=100pA n=0.01 )
 .ends zener_diode
 
-
 ** main circuit **
 * ac line voltage 
-Vac 10 0 sin (0 120V 60Hz 0 0)
-Rg 10 1 100
+* positive vdd
+
+Vac1 9 0 sin (0 120V 60Hz 0 0)
+Rg1 9 1 100
 
 * transformer section center tap
-Lp 1 0 4.57
-Ls 2 0 1
-Kxfrmr Lp Ls 0.99999
+Lp1 1 0 4.57
+Ls1 2 0 1
+Kxfrmr1 Lp1 Ls1 0.99999
 
 
 D1 2 6 1mA_diode
 C1 0 6 500uF
-Rs 6 7 225k
+Rs1 6 7 225k
 XZ1 7 0 zener_diode
+
+* negative vdd
+Vac2 10 0 sin (0 120V 60Hz 0 0)
+Rg2 10 11 100
+
+* transformer section center tap
+Lp2 11 0 4.57
+Ls2 12 0 1
+Kxfrmr2 Lp2 Ls2 0.99999
+
+
+D2 16 12 1mA_diode
+C2 0 16 500uF
+Rs2 16 17 225k
+XZ2 17 0 zener_diode
+
+
 
 
 ** analysis requests
